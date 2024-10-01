@@ -30,17 +30,27 @@ function keyPress(event) {
     switch (event.key) {
         case "ArrowLeft":
             {
+                if (direction === "right") return;
                 direction = "left";
             }
             break;
         case "ArrowRight":
-            direction = "right";
+            {
+                if (direction === "left") return;
+                direction = "right";
+            }
             break;
         case "ArrowUp":
-            direction = "up";
+            {
+                if (direction === "down") return;
+                direction = "up";
+            }
             break;
         case "ArrowDown":
-            direction = "down";
+            {
+                if (direction === "up") return;
+                direction = "down";
+            }
             break;
 
         default:
@@ -59,10 +69,8 @@ function tick() {
 
     let curr = queue.head;
     console.log("HEAD:", curr);
-    
 
     while (curr) {
-        
         writeToCell(curr.data.row, curr.data.col, 0);
         curr = curr.next;
     }
@@ -72,10 +80,10 @@ function tick() {
     //     col: queue[queue.length - 1].col,
     // };
 
-        const head = {
-            row: queue.tail.data.row,
-            col: queue.tail.data.col,
-        };
+    const head = {
+        row: queue.tail.data.row,
+        col: queue.tail.data.col,
+    };
 
     switch (direction) {
         case "left":
@@ -118,7 +126,7 @@ function tick() {
 
     // Indsæt nyt hoved på slange
     // queue.push(head);
-    queue.enqueue(head)
+    queue.enqueue(head);
 
     // Fjern sidste del af slange
     // queue.shift();
@@ -129,13 +137,13 @@ function tick() {
     //     writeToCell(part.row, part.col, 1);
     // }
 
-      curr = queue.head;
-      console.log("HEAD:", curr);
+    curr = queue.head;
+    console.log("HEAD:", curr);
 
-      while (curr) {
-          writeToCell(curr.data.row, curr.data.col, 1);
-          curr = curr.next;
-      }
+    while (curr) {
+        writeToCell(curr.data.row, curr.data.col, 1);
+        curr = curr.next;
+    }
 
     // display the model in full
     updateDisplayBoard();
@@ -169,7 +177,7 @@ function createSnake() {
     snake.enqueue({
         row: 1,
         col: 7,
-    }); 
+    });
     snake.enqueue({
         row: 1,
         col: 6,
@@ -178,8 +186,7 @@ function createSnake() {
         row: 1,
         col: 5,
     });
-    console.log("SNAKE:", snake);
-    
+
     queue = snake;
 }
 
@@ -190,7 +197,6 @@ function createModel(rows, cols) {
         newGrid[row] = new Array(cols).fill(0);
     }
     model = newGrid;
-    console.log(model);
 }
 
 function writeToCell(row, col, value) {
