@@ -9,6 +9,8 @@ window.addEventListener("load", start);
 // GAME SETTINGS
 const GRID_ROWS = 20;
 const GRID_COLS = 20;
+const TICK_TIME = 300;
+let points = 0;
 
 function start() {
     console.log(`Javascript kører`);
@@ -61,7 +63,7 @@ function keyPress(event) {
 
 function tick() {
     // setup next tick
-    setTimeout(tick, 500);
+    const timeout = setTimeout(tick, TICK_TIME);
 
     let curr = snake.head;
 
@@ -75,10 +77,6 @@ function tick() {
         row: snake.tail.data.row,
         col: snake.tail.data.col,
     };
-
-    console.log("ACTUAL HEAD:",snake.tail.data);
-    console.log("SELECTED HEAD:",head);
-    
 
     switch (direction) {
         case "left":
@@ -120,15 +118,25 @@ function tick() {
     }
 
     const cellValue = readFromCell(head.row, head.col);
-    console.log(cellValue);
+
+    // Check if the snake hits itself
+    curr = snake.head;
+    while (curr) {
+        if (curr.data.row === head.row && curr.data.col === head.col) {
+            console.log("LOSE");
+            clearTimeout(timeout);
+            loseGame();
+        }
+        curr = curr.next;
+    }
 
     // Insert new head on snake
     snake.enqueue(head);
 
     // Remove last part of snake
     if (cellValue === 2) {
-        // writeToCell(head.row, head.col, 1);
-        insertFoodInRandomCell();
+        setTimeout(insertFoodInRandomCell, TICK_TIME * 2);
+        points++;
     } else {
         snake.dequeue();
     }
@@ -176,7 +184,6 @@ function createSnake() {
         col: 5,
     });
     console.log("SNAKE:", newSnake);
-    
 
     snake = newSnake;
 }
@@ -237,6 +244,16 @@ function updateDisplayBoard() {
             }
         }
     }
+
+    updatePointsCounter();
+}
+
+function loseGame() {
+    document.querySelector("#game-status").textContent = "You lost";
+}
+
+function updatePointsCounter() {
+    document.querySelector("#point-counter").textContent = points;
 }
 
 // #endregion view
