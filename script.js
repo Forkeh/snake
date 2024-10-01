@@ -5,8 +5,8 @@ window.addEventListener("load", start);
 // ****** CONTROLLER ******
 // #region controller
 // GAME SETTINGS
-const GRID_ROWS = 10;
-const GRID_COLS = 15;
+const GRID_ROWS = 20;
+const GRID_COLS = 20;
 
 function start() {
     console.log(`Javascript kører`);
@@ -25,7 +25,9 @@ function keyPress(event) {
     console.log(event);
     switch (event.key) {
         case "ArrowLeft":
-            direction = "left";
+            {
+                direction = "left";
+            }
             break;
         case "ArrowRight":
             direction = "right";
@@ -61,14 +63,14 @@ function tick() {
             {
                 head.col--;
                 if (head.col < 0) {
-                    head.col = 9;
+                    head.col = GRID_COLS - 1;
                 }
             }
             break;
         case "right":
             {
                 head.col++;
-                if (head.col > 9) {
+                if (head.col > GRID_COLS - 1) {
                     head.col = 0;
                 }
             }
@@ -78,14 +80,14 @@ function tick() {
             {
                 head.row--;
                 if (head.row < 0) {
-                    head.row = 9;
+                    head.row = GRID_ROWS - 1;
                 }
             }
             break;
         case "down":
             {
                 head.row++;
-                if (head.row > 9) {
+                if (head.row > GRID_ROWS - 1) {
                     head.row = 0;
                 }
             }
