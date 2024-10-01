@@ -19,6 +19,8 @@ function start() {
 
     createModel(GRID_ROWS, GRID_COLS);
 
+    insertFoodInRandomCell();
+
     createVisualBoard();
 
     // start ticking
@@ -26,7 +28,6 @@ function start() {
 }
 
 function keyPress(event) {
-    console.log(event);
     switch (event.key) {
         case "ArrowLeft":
             {
@@ -62,28 +63,22 @@ function tick() {
     // setup next tick
     setTimeout(tick, 500);
 
-    // remove player from model
-    // for (const part of queue) {
-    //     writeToCell(part.row, part.col, 0);
-    // }
+    let curr = snake.head;
 
-    let curr = queue.head;
-    console.log("HEAD:", curr);
-
+    // Remove snake from model
     while (curr) {
         writeToCell(curr.data.row, curr.data.col, 0);
         curr = curr.next;
     }
 
-    // const head = {
-    //     row: queue[queue.length - 1].row,
-    //     col: queue[queue.length - 1].col,
-    // };
-
     const head = {
-        row: queue.tail.data.row,
-        col: queue.tail.data.col,
+        row: snake.tail.data.row,
+        col: snake.tail.data.col,
     };
+
+    console.log("ACTUAL HEAD:",snake.tail.data);
+    console.log("SELECTED HEAD:",head);
+    
 
     switch (direction) {
         case "left":
@@ -124,21 +119,22 @@ function tick() {
             break;
     }
 
-    // Indsæt nyt hoved på slange
-    // queue.push(head);
-    queue.enqueue(head);
+    const cellValue = readFromCell(head.row, head.col);
+    console.log(cellValue);
 
-    // Fjern sidste del af slange
-    // queue.shift();
-    queue.dequeue();
+    // Insert new head on snake
+    snake.enqueue(head);
 
-    // re-add player to model
-    // for (const part of queue) {
-    //     writeToCell(part.row, part.col, 1);
-    // }
+    // Remove last part of snake
+    if (cellValue === 2) {
+        // writeToCell(head.row, head.col, 1);
+        insertFoodInRandomCell();
+    } else {
+        snake.dequeue();
+    }
 
-    curr = queue.head;
-    console.log("HEAD:", curr);
+    // re-add snake to model
+    curr = snake.head;
 
     while (curr) {
         writeToCell(curr.data.row, curr.data.col, 1);
@@ -149,45 +145,40 @@ function tick() {
     updateDisplayBoard();
 }
 
+function insertFoodInRandomCell() {
+    const randomRow = Math.floor(Math.random() * GRID_ROWS);
+    const randomCol = Math.floor(Math.random() * GRID_COLS);
+    writeToCell(randomRow, randomCol, 2);
+}
+
 // #endregion controller
 
 // ****** MODEL ******
 // #region model
 let model;
 
-let queue = [
-    {
-        row: 5,
-        col: 7,
-    },
-    {
-        row: 5,
-        col: 6,
-    },
-    {
-        row: 5,
-        col: 5,
-    }, // <- End of queue (snake's head)
-];
+let snake;
 
 let direction = "left";
 
 function createSnake() {
-    let snake = new Queue();
-    snake.enqueue({
+    let newSnake = new Queue();
+    newSnake.enqueue({
         row: 1,
         col: 7,
     });
-    snake.enqueue({
+    newSnake.enqueue({
         row: 1,
         col: 6,
     });
-    snake.enqueue({
+    newSnake.enqueue({
         row: 1,
         col: 5,
     });
+    console.log("SNAKE:", newSnake);
+    
 
-    queue = snake;
+    snake = newSnake;
 }
 
 function createModel(rows, cols) {
@@ -213,7 +204,6 @@ function readFromCell(row, col) {
 // #region view
 function createVisualBoard() {
     const grid = document.querySelector("#grid");
-    console.log(grid);
 
     grid.style.setProperty("--GRID_COLUMNS", GRID_COLS);
 
@@ -229,7 +219,6 @@ function createVisualBoard() {
 
 function updateDisplayBoard() {
     const cells = document.querySelectorAll("#grid .cell");
-    console.log(cells);
 
     for (let row = 0; row < GRID_ROWS; row++) {
         for (let col = 0; col < GRID_COLS; col++) {

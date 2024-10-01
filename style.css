@@ -21,10 +21,12 @@ body {
   border-bottom: 1px dashed darkgray;
 }
 
-.player {
-  background-color: #6b6;
-}
+
 
 .goal {
   background-color: #cc0;
+}
+
+.player {
+  background-color: #6b6;
 }
