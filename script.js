@@ -1,5 +1,7 @@
 "use strict";
 
+import { Queue } from "./queue.js";
+
 window.addEventListener("load", start);
 
 // ****** CONTROLLER ******
@@ -12,6 +14,8 @@ function start() {
     console.log(`Javascript kører`);
 
     document.addEventListener("keydown", keyPress);
+
+    createSnake();
 
     createModel(GRID_ROWS, GRID_COLS);
 
@@ -49,14 +53,29 @@ function tick() {
     setTimeout(tick, 500);
 
     // remove player from model
-    for (const part of queue) {
-        writeToCell(part.row, part.col, 0);
+    // for (const part of queue) {
+    //     writeToCell(part.row, part.col, 0);
+    // }
+
+    let curr = queue.head;
+    console.log("HEAD:", curr);
+    
+
+    while (curr) {
+        
+        writeToCell(curr.data.row, curr.data.col, 0);
+        curr = curr.next;
     }
 
-    const head = {
-        row: queue[queue.length - 1].row,
-        col: queue[queue.length - 1].col,
-    };
+    // const head = {
+    //     row: queue[queue.length - 1].row,
+    //     col: queue[queue.length - 1].col,
+    // };
+
+        const head = {
+            row: queue.tail.data.row,
+            col: queue.tail.data.col,
+        };
 
     switch (direction) {
         case "left":
@@ -98,15 +117,25 @@ function tick() {
     }
 
     // Indsæt nyt hoved på slange
-    queue.push(head);
+    // queue.push(head);
+    queue.enqueue(head)
 
     // Fjern sidste del af slange
-    queue.shift();
+    // queue.shift();
+    queue.dequeue();
 
     // re-add player to model
-    for (const part of queue) {
-        writeToCell(part.row, part.col, 1);
-    }
+    // for (const part of queue) {
+    //     writeToCell(part.row, part.col, 1);
+    // }
+
+      curr = queue.head;
+      console.log("HEAD:", curr);
+
+      while (curr) {
+          writeToCell(curr.data.row, curr.data.col, 1);
+          curr = curr.next;
+      }
 
     // display the model in full
     updateDisplayBoard();
@@ -118,7 +147,7 @@ function tick() {
 // #region model
 let model;
 
-const queue = [
+let queue = [
     {
         row: 5,
         col: 7,
@@ -134,6 +163,25 @@ const queue = [
 ];
 
 let direction = "left";
+
+function createSnake() {
+    let snake = new Queue();
+    snake.enqueue({
+        row: 1,
+        col: 7,
+    }); 
+    snake.enqueue({
+        row: 1,
+        col: 6,
+    });
+    snake.enqueue({
+        row: 1,
+        col: 5,
+    });
+    console.log("SNAKE:", snake);
+    
+    queue = snake;
+}
 
 function createModel(rows, cols) {
     const newGrid = new Array(rows);
