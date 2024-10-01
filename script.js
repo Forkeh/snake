@@ -7,9 +7,10 @@ window.addEventListener("load", start);
 // ****** CONTROLLER ******
 // #region controller
 // GAME SETTINGS
-const GRID_ROWS = 20;
+const GRID_ROWS = 30;
 const GRID_COLS = 20;
-const TICK_TIME = 300;
+let TICK_TIME = 300;
+const DECREASE_IN_PERCENTAGE = 0.95;
 let points = 0;
 
 function start() {
@@ -83,7 +84,10 @@ function tick() {
             {
                 head.col--;
                 if (head.col < 0) {
-                    head.col = GRID_COLS - 1;
+                    // head.col = GRID_COLS - 1;
+                    loseGame();
+                    clearTimeout(timeout);
+                    return;
                 }
             }
             break;
@@ -91,7 +95,10 @@ function tick() {
             {
                 head.col++;
                 if (head.col > GRID_COLS - 1) {
-                    head.col = 0;
+                    // head.col = 0;
+                    loseGame();
+                    clearTimeout(timeout);
+                    return;
                 }
             }
 
@@ -100,7 +107,10 @@ function tick() {
             {
                 head.row--;
                 if (head.row < 0) {
-                    head.row = GRID_ROWS - 1;
+                    // head.row = GRID_ROWS - 1;
+                    loseGame();
+                    clearTimeout(timeout);
+                    return;
                 }
             }
             break;
@@ -108,7 +118,10 @@ function tick() {
             {
                 head.row++;
                 if (head.row > GRID_ROWS - 1) {
-                    head.row = 0;
+                    // head.row = 0;
+                    loseGame();
+                    clearTimeout(timeout);
+                    return;
                 }
             }
             break;
@@ -123,7 +136,6 @@ function tick() {
     curr = snake.head;
     while (curr) {
         if (curr.data.row === head.row && curr.data.col === head.col) {
-            console.log("LOSE");
             clearTimeout(timeout);
             loseGame();
         }
@@ -136,6 +148,7 @@ function tick() {
     // Remove last part of snake
     if (cellValue === 2) {
         setTimeout(insertFoodInRandomCell, TICK_TIME * 2);
+        TICK_TIME = TICK_TIME * DECREASE_IN_PERCENTAGE; // Increases speed by 5%
         points++;
     } else {
         snake.dequeue();
@@ -156,6 +169,11 @@ function tick() {
 function insertFoodInRandomCell() {
     const randomRow = Math.floor(Math.random() * GRID_ROWS);
     const randomCol = Math.floor(Math.random() * GRID_COLS);
+    const value = readFromCell(randomRow, randomCol);
+
+    if (value === 1) {
+        insertFoodInRandomCell();
+    }
     writeToCell(randomRow, randomCol, 2);
 }
 
@@ -172,16 +190,16 @@ let direction = "left";
 function createSnake() {
     let newSnake = new Queue();
     newSnake.enqueue({
-        row: 1,
-        col: 7,
+        row: Math.floor(GRID_ROWS / 2),
+        col: Math.floor(GRID_COLS / 2),
     });
     newSnake.enqueue({
-        row: 1,
-        col: 6,
+        row: Math.floor(GRID_ROWS / 2),
+        col: Math.floor(GRID_COLS / 2) -1,
     });
     newSnake.enqueue({
-        row: 1,
-        col: 5,
+        row: Math.floor(GRID_ROWS / 2),
+        col: Math.floor(GRID_COLS / 2)-2,
     });
     console.log("SNAKE:", newSnake);
 
