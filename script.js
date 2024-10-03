@@ -12,6 +12,7 @@ const GRID_COLS = 20;
 let TICK_TIME = 200;
 const DECREASE_IN_PERCENTAGE = 0.95;
 let points = 0;
+let hasKeyPressed = false;
 
 function init() {
     console.log(`Javascript kører`);
@@ -41,29 +42,35 @@ function startGame() {
 }
 
 function keyPress(event) {
+    if (hasKeyPressed) return;
+
     switch (event.key) {
         case "ArrowLeft":
             {
                 if (direction === "right") return;
                 direction = "left";
+                hasKeyPressed = true;
             }
             break;
         case "ArrowRight":
             {
                 if (direction === "left") return;
                 direction = "right";
+                hasKeyPressed = true;
             }
             break;
         case "ArrowUp":
             {
                 if (direction === "down") return;
                 direction = "up";
+                hasKeyPressed = true;
             }
             break;
         case "ArrowDown":
             {
                 if (direction === "up") return;
                 direction = "down";
+                hasKeyPressed = true;
             }
             break;
 
@@ -75,6 +82,8 @@ function keyPress(event) {
 function tick() {
     // setup next tick
     const timeout = setTimeout(tick, TICK_TIME);
+
+    hasKeyPressed = false;
 
     let curr = snake.head;
 
