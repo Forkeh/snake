@@ -2,21 +2,21 @@
 
 import { Queue } from "./queue.js";
 
-window.addEventListener("load", start);
+window.addEventListener("load", init);
 
 // ****** CONTROLLER ******
 // #region controller
 // GAME SETTINGS
 const GRID_ROWS = 30;
 const GRID_COLS = 20;
-let TICK_TIME = 300;
+let TICK_TIME = 200;
 const DECREASE_IN_PERCENTAGE = 0.95;
 let points = 0;
 
-function start() {
+function init() {
     console.log(`Javascript kører`);
 
-    document.addEventListener("keydown", keyPress);
+    document.removeEventListener("keydown", init);
 
     createSnake();
 
@@ -25,6 +25,16 @@ function start() {
     insertFoodInRandomCell();
 
     createVisualBoard();
+
+    document.addEventListener("keydown", startGame);
+}
+
+function startGame() {
+    document.removeEventListener("keydown", startGame);
+
+    document.querySelector("#overlay-start").style.display = "none";
+
+    document.addEventListener("keydown", keyPress);
 
     // start ticking
     tick();
@@ -195,11 +205,11 @@ function createSnake() {
     });
     newSnake.enqueue({
         row: Math.floor(GRID_ROWS / 2),
-        col: Math.floor(GRID_COLS / 2) -1,
+        col: Math.floor(GRID_COLS / 2) - 1,
     });
     newSnake.enqueue({
         row: Math.floor(GRID_ROWS / 2),
-        col: Math.floor(GRID_COLS / 2)-2,
+        col: Math.floor(GRID_COLS / 2) - 2,
     });
     console.log("SNAKE:", newSnake);
 
@@ -268,6 +278,8 @@ function updateDisplayBoard() {
 
 function loseGame() {
     document.querySelector("#game-status").textContent = "You lost";
+
+    document.removeEventListener("keydown", keyPress);
 }
 
 function updatePointsCounter() {
