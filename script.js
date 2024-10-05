@@ -33,7 +33,7 @@ function init() {
 function startGame() {
     document.removeEventListener("keydown", startGame);
 
-    document.querySelector("#overlay-start").style.display = "none";
+    document.querySelector("#overlay").style.display = "none";
 
     document.addEventListener("keydown", keyPress);
 
@@ -286,9 +286,13 @@ function updateDisplayBoard() {
 }
 
 function loseGame() {
-    document.querySelector("#game-status").textContent = "You lost";
-
     document.removeEventListener("keydown", keyPress);
+
+    document.querySelector("#overlay").style.display = "flex";
+
+    document.querySelector("#overlay").innerHTML = "You lost. Press key to try again!";
+
+    document.addEventListener("keydown", () => location.reload());
 }
 
 function updatePointsCounter() {
