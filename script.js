@@ -27,18 +27,11 @@ function init() {
 
     createVisualBoard();
 
-    document.addEventListener("keydown", startGame);
-}
-
-function startGame() {
-    document.removeEventListener("keydown", startGame);
-
-    document.querySelector("#overlay").style.display = "none";
-
     document.addEventListener("keydown", keyPress);
 
     // start ticking
     tick();
+
 }
 
 function keyPress(event) {
